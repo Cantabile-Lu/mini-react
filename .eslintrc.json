@@ -22,6 +22,7 @@
         "prettier/prettier": "error",
         "no-case-declarations": "off",
         "no-constant-condition": "off",
+        "no-explicit-any": "off",
         "@typescript-eslint/ban-ts-comment": "off"
     }
 }
