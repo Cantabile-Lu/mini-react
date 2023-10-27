@@ -28,17 +28,17 @@ export class FiberNode {
 		// 构成树结构
 		this.tag = tag;
 		this.key = key;
-		this.stateNode = null;
-		this.return = null; // 指向父节点
-		this.sibling = null; // 指向兄弟节点
-		this.child = null; // 指向子节点
+		this.stateNode = null; // DOM元素
+		this.return = null; // 指向父fiberNode
+		this.sibling = null; // 指向兄弟fiberNode
+		this.child = null; // 指向子fiberNode
 		this.index = 0; // 当前节点在父节点中的位置
 		this.ref = null; // ref
 
 		// 作为工作单元
-		this.pendingProps = pendingProps; // 当前节点的属性
-		this.memoizedProps = null; // 上一次渲染的属性
-		this.alternate = null;
+		this.pendingProps = pendingProps; // 工作开始前的工作单元
+		this.memoizedProps = null; // 工作结束后的工作单元
+		this.alternate = null; // 双缓存技术
 		this.updateQueue = null; // 更新队列
 		this.memoizedState = null;
 		// 副作用标识
@@ -49,7 +49,7 @@ export class FiberNode {
 export class FiberRootNode {
 	container: Container;
 	current: FiberNode;
-	finishedWork: FiberNode | null;
+	finishedWork: FiberNode | null; // 更新完成的hostRootFiber
 	constructor(container: Container, hostRootFiber: FiberNode) {
 		this.container = container;
 		this.current = hostRootFiber;

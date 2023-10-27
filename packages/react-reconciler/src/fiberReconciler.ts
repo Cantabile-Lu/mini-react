@@ -1,4 +1,5 @@
-// 在执行React.createRoot的时候，会调用createContainer方法，这个方法会返回一个RootFiber对象，这个对象就是我们所说的RootFiber根节点。
+// 在执行React.createRoot的时候，会调用createContainer方法，
+// 这个方法会返回一个RootFiber对象，这个对象就是我们所说的RootFiber根节点。
 import { Container } from 'hostConfig';
 import { FiberNode, FiberRootNode } from './filber';
 import { HostRoot } from './workTags';
@@ -23,9 +24,9 @@ export function updateContainer(
 	root: FiberRootNode
 ) {
 	const hostRootFiber = root.current;
-
+	// 首屏渲染触发更新
 	const update = createUpdate<ReactElement | null>(element);
-
+	// 插入到hostRootFiber.updateQueue
 	enqueueUpdate(
 		hostRootFiber.updateQueue as UpdateQueue<ReactElement | null>,
 		update

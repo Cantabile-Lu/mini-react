@@ -14,23 +14,24 @@ export const createUpdate = <State>(action: Action<State>): Update<State> => {
 	};
 };
 
-export const createUpdateQueue = <Action>() => {
+export const createUpdateQueue = <State>() => {
 	return {
 		shared: {
 			pending: null
 		}
-	} as UpdateQueue<Action>;
+	} as UpdateQueue<State>;
 };
 
-export const enqueueUpdate = <Action>(
-	updateQueue: UpdateQueue<Action>,
-	update: Update<Action>
+// 往updateQueue中增加update
+export const enqueueUpdate = <State>(
+	updateQueue: UpdateQueue<State>,
+	update: Update<State>
 ) => {
 	updateQueue.shared.pending = update;
 };
-
+// 消费update
 export const processUpdateQueue = <State>(
-	baseState: State,
+	baseState: State, // 初始update
 	pendingUpdate: Update<State> | null
 ): { memorizedState: State } => {
 	const result: ReturnType<typeof processUpdateQueue<State>> = {
@@ -39,6 +40,7 @@ export const processUpdateQueue = <State>(
 
 	if (pendingUpdate !== null) {
 		const action = pendingUpdate.action;
+		// 如果action是function类型
 		if (action instanceof Function) {
 			result.memorizedState = action(baseState);
 		} else {

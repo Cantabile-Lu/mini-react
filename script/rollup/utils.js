@@ -4,7 +4,8 @@ import fs from 'fs';
 // 将ts打包成js插件
 import ts from 'rollup-plugin-typescript2';
 import cjs from '@rollup/plugin-commonjs';
-
+// 生产环境是否打印错误信息
+import replace from '@rollup/plugin-replace';
 // 包的路径
 const pkgPath = path.resolve(__dirname, '../../packages');
 // 打包后的路径
@@ -34,6 +35,11 @@ export function getPackageJson(pkgName) {
 /**
  * @description 获取公用的plugins
  */
-export function getBaseRollupPlugins({ typescript = {} } = {}) {
-	return [cjs(), ts(typescript)];
+export function getBaseRollupPlugins({
+	alias = {
+		__DEV__: true
+	},
+	typescript = {}
+} = {}) {
+	return [replace(alias), cjs(), ts(typescript)];
 }
