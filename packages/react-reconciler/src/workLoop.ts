@@ -5,6 +5,8 @@ import { createWorkInProgress, FiberNode, FiberRootNode } from './filber';
 import { beginWork } from './beginWork';
 import { completeWork } from './completeWork';
 import { HostRoot } from './workTags';
+import { Mutation, MutationMask, NoFlags } from './fiberFlags';
+import { commitMutationEffect } from './commitWork';
 
 let workInProgress: FiberNode | null = null;
 
@@ -59,6 +61,39 @@ function renderRoot(root: FiberRootNode) {
 	commitRoot(root);
 }
 
+function commitRoot(root: FiberRootNode) {
+	/**
+	 * 包含3个子阶段
+	 * 1: beforeMutation阶段
+	 * 2: mutation阶段
+	 * 3: layout阶段
+	 */
+
+	const finishedWork = root.finishedWork;
+	if (finishedWork === null) {
+		return null;
+	}
+	if (__DEV__) {
+		console.warn('commit阶段开始', finishedWork);
+	}
+
+	// 重置
+	root.finishedWork = null;
+	// 子阶段是否存在
+	const subtreeHasEffect =
+		(finishedWork.subtreeFlags & MutationMask) !== NoFlags;
+	const rootHasEffect = (finishedWork.flags & MutationMask) === NoFlags;
+	if (subtreeHasEffect || rootHasEffect) {
+		// 	1: beforeMutation阶段
+		// 2: mutation阶段
+		root.current = finishedWork;
+		commitMutationEffect();
+		// 3: layout阶段
+	} else {
+		// 不存在对应的操作
+		root.current = finishedWork;
+	}
+}
 function workLoop() {
 	while (workInProgress !== null) {
 		preformUnitOfWork(workInProgress);

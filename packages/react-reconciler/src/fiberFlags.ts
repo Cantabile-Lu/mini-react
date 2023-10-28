@@ -7,6 +7,7 @@ export const Update = 0b0001000;
 // 删除子节点
 export const ChildDeletion = 0b0010000;
 
+export const MutationMask = Placement | Update | ChildDeletion;
 export const PerformedWork = 0b0000010;
 export const PlacementAndUpdate = 0b0001100;
 export const Deletion = 0b0010000;
