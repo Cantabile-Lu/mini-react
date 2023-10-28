@@ -3,6 +3,7 @@ import { FiberNode } from './filber';
 import { HostComponent, HostRoot, HostText } from './workTags';
 import { processUpdateQueue, UpdateQueue } from './updateQueue';
 import { ReactElement } from 'shared/ReactTypes';
+import { mountChildFibers, reconcileChildFibers } from './childFibers';
 
 export const beginWork = (wip: FiberNode) => {
 	// 比较, 然后返回子fiberNode
@@ -19,6 +20,7 @@ export const beginWork = (wip: FiberNode) => {
 			}
 			break;
 	}
+	return null;
 };
 
 // 计算状态的最新值
@@ -45,8 +47,12 @@ function updateHostComponent(wip: FiberNode) {
 	return wip.child;
 }
 
-function reconileChildren(wip: FiberNode, child?: ReactElement | null) {
+function reconileChildren(wip: FiberNode, children?: ReactElement | null) {
 	const current = wip.alternate;
-
-	reconcileChildFibers(wip, current?.child, children);
+	if (current !== null) {
+		wip.child = reconcileChildFibers(wip, current?.child, children);
+	} else {
+		// mount
+		wip.child = mountChildFibers(wip, null, children);
+	}
 }

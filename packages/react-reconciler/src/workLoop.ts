@@ -52,6 +52,11 @@ function renderRoot(root: FiberRootNode) {
 			workInProgress = null;
 		}
 	} while (true);
+
+	const finishedWork = root.current.alternate;
+	root.finishedWork = finishedWork;
+	// fiberNode 树
+	commitRoot(root);
 }
 
 function workLoop() {
