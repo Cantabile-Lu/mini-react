@@ -12,8 +12,10 @@ export const commitMutationEffect = (finishedWork: FiberNode) => {
 			(nextEffect.subtreeFlags & MutationMask) !== NoFlags &&
 			child !== null
 		) {
+			// 继续向子节点遍历
 			nextEffect = child;
 		} else {
+			// 找到底或者没有了
 			// 向上   dfs
 			while (nextEffect !== null) {
 				commitMutationEffectsOnFiber(nextEffect);

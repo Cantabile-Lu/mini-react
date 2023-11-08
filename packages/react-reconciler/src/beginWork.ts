@@ -5,6 +5,12 @@ import { processUpdateQueue, UpdateQueue } from './updateQueue';
 import { ReactElement } from 'shared/ReactTypes';
 import { mountChildFibers, reconcileChildFibers } from './childFibers';
 
+/**
+ * @description beginWork是整个流程的开始
+ * @params current: 在视图层渲染的树
+ * @params workInProgress: 整个内存中所构建的fiber树
+ * @params renderLanes: 优先级
+ */
 export const beginWork = (wip: FiberNode) => {
 	// 比较, 然后返回子fiberNode
 	switch (wip.tag) {
