@@ -1,7 +1,10 @@
 import ReactDOM from 'react-dom';
 
+import { useState } from 'react';
+
 function App() {
-	return <div>17</div>;
+	const [num] = useState(100);
+	return <div>{num}</div>;
 }
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<App />

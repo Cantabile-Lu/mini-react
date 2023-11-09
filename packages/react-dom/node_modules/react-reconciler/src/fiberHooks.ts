@@ -2,6 +2,14 @@ import { FiberNode } from './filber';
 import internal from 'shared/internals';
 import { Dispatcher } from 'react/src/currentDisoatcher';
 import { Dispatch } from 'react';
+import {
+	createUpdate,
+	createUpdateQueue,
+	enqueueUpdate,
+	UpdateQueue
+} from './updateQueue';
+import { Action } from 'shared/ReactTypes';
+import { scheduleUpdateOnFiber } from './workLoop';
 
 let currentlyRenderingFiber: FiberNode | null = null;
 // 当前正在处理的hook
@@ -35,11 +43,35 @@ export function renderWithHooks(wip: FiberNode) {
 const HooksDispatcherOnMount: Dispatcher = {
 	useState: mountState
 };
+
 function mountState<State>(
 	initialState: (() => State) | State
 ): [State, Dispatch<State>] {
 	const hook = mountWorkInProgressHook();
-	return [];
+
+	let memoizedState;
+	if (initialState instanceof Function) {
+		memoizedState = initialState();
+	} else {
+		memoizedState = initialState;
+	}
+	const queue = createUpdateQueue<State>();
+	hook.updateQueue = queue;
+	hook.memoizeState = initialState;
+	// @ts-ignore
+	const dispatch = dispatchSetState.bind(null, currentlyRenderingFiber, queue);
+	queue.dispatch = dispatch;
+	return [memoizedState, dispatch];
+}
+
+function dispatchSetState<State>(
+	fiber: FiberNode,
+	updateQueue: UpdateQueue<State>,
+	action: Action<State>
+) {
+	const update = createUpdate(action);
+	enqueueUpdate(updateQueue, update);
+	scheduleUpdateOnFiber(fiber);
 }
 
 function mountWorkInProgressHook(): Hook {
@@ -51,6 +83,14 @@ function mountWorkInProgressHook(): Hook {
 	if (workInProgressHook === null) {
 		if (currentlyRenderingFiber === null) {
 			throw new Error('请在函数内调用hook');
+		} else {
+			workInProgressHook = hook;
+
+			currentlyRenderingFiber.memoizedState = workInProgressHook;
 		}
+	} else {
+		workInProgressHook.next = hook;
+		workInProgressHook = hook;
 	}
+	return workInProgressHook;
 }
