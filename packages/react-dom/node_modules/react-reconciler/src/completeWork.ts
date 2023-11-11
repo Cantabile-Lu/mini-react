@@ -12,14 +12,21 @@ import {
 	createInstance,
 	createTextInstance
 } from 'react-dom/src/hostConfig';
-import { NoFlags } from './fiberFlags';
+import { NoFlags, Update } from './fiberFlags';
 
+/**
+ * @description 标记更新
+ */
+function markUpdate(fiber: FiberNode) {
+	fiber.flags |= Update;
+}
 export const completeWork = (wip: FiberNode) => {
 	const newProps = wip.pendingProps;
 	const current = wip.alternate;
 	switch (wip.tag) {
 		case HostComponent:
 			if (current !== null && wip.stateNode) {
+				// 更新
 			} else {
 				// 1: 构建DOM
 				const instance = createInstance(wip.type, newProps);
@@ -31,6 +38,12 @@ export const completeWork = (wip: FiberNode) => {
 			return null;
 		case HostText:
 			if (current !== null && wip.stateNode) {
+				const oldText = current.memoizedProps.content;
+				const newText = newProps.content;
+
+				if (oldText !== newText) {
+					markUpdate(wip);
+				}
 			} else {
 				// 1: 构建DOM
 				const instance = createTextInstance(newProps.content);

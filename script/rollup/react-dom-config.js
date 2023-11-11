@@ -17,12 +17,12 @@ export default [
 		output: [
 			{
 				file: `${pkgDistPath}/index.js`,
-				name: 'index.js',
+				name: 'ReactDOM',
 				format: 'umd'
 			},
 			{
 				file: `${pkgDistPath}/client.js`,
-				name: 'client.js',
+				name: 'client',
 				format: 'umd'
 			}
 		],
@@ -50,22 +50,18 @@ export default [
 				})
 			})
 		]
+	},
+	// react-test-utils
+	{
+		input: `${pkgPath}/test-utils.ts`,
+		output: [
+			{
+				file: `${pkgDistPath}/test-utils.js`,
+				name: 'testUtils',
+				format: 'umd'
+			}
+		],
+		external: ['react-dom', 'react'],
+		plugins: getBaseRollupPlugins()
 	}
-	// jsx-runtime
-	// {
-	// 	input: `${pkgPath}/src/jsx.ts`,
-	// 	output: [
-	// 		{
-	// 			file: `${pkgDistPath}/jsx-runtime.js`,
-	// 			name: 'jsx-runtime.js',
-	// 			format: 'umd'
-	// 		},
-	// 		{
-	// 			file: `${pkgDistPath}/jsx-dev-runtime.js`,
-	// 			name: 'jsx-dev-runtime.js',
-	// 			format: 'umd'
-	// 		}
-	// 	],
-	// 	plugins: getBaseRollupPlugins()
-	// }
 ];

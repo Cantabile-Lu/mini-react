@@ -1,7 +1,7 @@
 import { FiberNode } from './filber';
 import internal from 'shared/internals';
 import { Dispatcher } from 'react/src/currentDisoatcher';
-import { Dispatch } from 'react';
+import { Dispatch } from 'react/src/currentDisoatcher';
 import {
 	createUpdate,
 	createUpdateQueue,
